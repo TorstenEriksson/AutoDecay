@@ -1,0 +1,138 @@
+Information about AutoDecay version 5.0        (c) Torsten Eriksson - Apr. 2005
+
+AutoDecay helps performing "decay analysis" of nodes in a cladogram or consensus
+tree, using the reverse constraint option in PAUP* 4.0.
+
+*********************************************************************************
+Please note: This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 2 of the License, or (at your option) any
+later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+http://www.gnu.org/copyleft/gpl.html
+*********************************************************************************
+
+
+FUNCTION OVERVIEW
+AutoDecay reads a tree which you supply and creates constraint trees for the
+nodes. A PAUP* command file is created ("setup") which contains the constraint
+tree definitions and the commands to run them. This command file must then be
+handed over to PAUP* (by you) and executed. PAUP* is set to perform one analysis
+for each node.  Please note that the success of getting meaningful decay values
+is to a large extent dependent upon how you set up your runs in PAUP*!
+During execution, PAUP* writes a log file which is utilised by AutoDecay in the
+next step. During this last ("extraction") step, the log file is scanned for
+results and compared to an optimal tree score supplied by you (commonly the
+length of the most parsimonious tree[s]). Decay values for the nodes are then
+computed and output to a file as well as inserted in a tree file. 
+
+This version may have other functionalty than previous versions. Please check
+README document.
+
+
+USAGE STEP BY STEP
+1. Preparation for SETUP
+You need: 
+    * a Nexus file containing the data set
+    * a Nexus file containing a nexus tree block with at least one tree 
+       (this may reside in the nexus data file or in any separate file; cf. notes below)
+       NOTE that these files should for simplicity reside in the same library (folder).
+    * the optimal tree score
+    * PAUP* 4.0
+
+The setup adds PAUP* search parameters to the command file. These can be added as a 
+parameter or if no parameter is present, read from a separate file 'AD.def'
+(or '~/.AutoDecay' on unix/Linux/Mac OS X).
+For example, if you want to use random addition sequence you might put the
+following there: hsearch addseq=random nreps=100 rseed=1
+Consult the PAUP* manual to find search parameters that fits the kind of run
+you want to use. 
+
+2. SETUP
+Change directory to the one where your tree file resides and use the command:
+
+AD.pl -s tree_file_name "optional paup* command string"
+
+AutoDecay will strip any trailing suffix (regardless of suffix length) and 
+write a command file with the suffix .adc. It will overwrite any old file
+with the same name without warning.
+
+3. Let PAUP* do the job
+Start PAUP* and execute your DATA file. Then execute the decay command file 
+(the ".adc" file) in PAUP*. Wait until all analyses have completed. During 
+this, a .log file is written by PAUP*.
+
+4. EXTRACT decay values
+Use the command:
+
+AD.pl -e adc_command_file_name optimal_tree_score
+
+AutoDecay reads the command file and the log files and computes the decay values.
+Two output files are produced: A list of nodes (filename.dcy) and a tree with
+decay vaules as internal node labels (filename.tre). Any old file with the same
+name will be overwritten without warning. (Mind your original tree file.)
+
+5. Check out the decay values
+The decay value files are text files. The dcy file is a straight list of decay 
+values with corresponding nodes, one line for each node:
+
+D=decay_value node=(list of all taxa above that node)
+
+If the input tree contains a translation table, the taxa will be translated. 
+
+The decay tree file is a NEXUS tree file which can be opened, for instance, with
+the Rod Page's TreeView utility. This is now available for most platforms (see
+http://taxonomy.zoology.gla.ac.uk/rod/treeview.html). 
+
+To view decay indices stored in the tree, open the tree file in TreeView or any
+other tree viewer which can read NEXUS tree files and display internal node
+labels. In TreeView, the indices will be displayed if you choose the command
+"Show Internal Edge Labels".
+
+CITATION
+If you feel AutoDecay has helped you enough to merit a citation - try something
+like the suggestion below. Editors may have their own regulations of how to cite
+computer media...
+Eriksson, T., 2001. AutoDecay ver. 5.0 (program distributed by the author).
+Bergius Foundation, Royal Swedish Academy of Sciences, Stockholm.
+
+
+NOTES AND KNOWN PROBLEMS
+* Since suffixes are added to file names it may be a problem if you use too long  
+   file names. This is notable for the Mac pre X system where file names not 
+   longer than 30 characters should be used (including suffix).
+* Take care in setting up your PAUP* runs. Some taxon addition sequences 
+   (like simple) are not very effective in finding the optimal trees using reverse
+   constraints if you have messy data. You might get too high decay indices!
+* This program always uses the FIRST tree it finds in the nexus tree file (block).
+* If you use an unrooted tree, the decay indices are still correct but might be
+   attributed to "inverted" nodes. Amend this by first opening the file in MacClade,
+   rooting the tree where  appropriate, saving it, and then running AutoDecay again.
+* Should you get an error when translating taxon names it can be usually be
+   amended by changing the saving preferences in MacClade or PAUP* so that no 
+   translation table is used with the tree(s).
+* Avoid saving the trees with branch lengths. AutoDecay tries to remove them, but
+   such may cause AutoDecay to behave in an unexpected way. 
+* In some cases, AutoDecay may be fooled by complex taxon names. Using brackets 
+   and other unusual characters in taxon names may be asking for trouble. The
+   best way is to use simple taxon names containing letters digits periods and
+   underscores. Be warned!
+
+Note that I do NOT claim originality. The notion of creating a tool which uses
+the functionality of PAUP* to automatically compute decay indices apparently has
+occurred in parallel. For example, Doug Eernisse has informed me that his "DNA
+stacks" partly incorporated the functionality of AutoDecay and that he was a year
+ahead of me. He distributes his package at (still?):
+http://biology.fullerton.edu/people/faculty/doug-eernisse
+There also used to be another utility called TreeRot around.
+
+ACKNOWLEDGEMENTS
+David Swofford created PAUP* without which this program would be meaningless.
+Michael Donoghue inadvertently inspired me to make AutoDecay.
+Anders Backlund and others have suggested amendments.
+Thanks to Rod Page for making TreeView available.
+
+This utility was written using Perl. Get it! It's free! http://www.perl.com
+

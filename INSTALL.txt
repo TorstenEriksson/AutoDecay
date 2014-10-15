@@ -1,0 +1,33 @@
+INSTALL AutoDecay 5.
+
+* clone the AutoDecay repository
+* The following files are important:
+	AD.pl             -  The AutoDecay program
+	AD.def            -  Settings file containing defaults
+	HelpText.txt      -  Info on how to run AutoDecay
+	
+Note: You may want to move the defaults file to your home directory:
+mv AD.def ~/.AutoDecay
+
+* Check that AD.pl is executable by you
+* Adjust $PATH if need be or copy AD.pl to a directory which is in your path.
+* If your perl executables don't reside in /usr/bin you'll have to modify
+  the first line of AutoDecay accordingly.
+* Read the HelpText.
+
+MOVING TEXT FILES BETWEEN PLATFORMS
+Windows still use the archaic form of text file line endings: CR+LF. Unix 
+uses LF and so does Mac OS X these days. The problem with line endings
+inevitably causes problems when you move files between systems because Perl
+needs text files with native line endings. You can change them by opening
+the file in an editor such as PAUP's own text editor and "save as...". Before
+saving, make sure to change file type. 
+
+Another way (on unix) is to open a terminal and use the "tr" command.
+
+Change a Mac Classic file into a unix file:
+tr "\r" "\n" <file_name >new_file_name
+Change a mac Classic file into a Windows file:
+tr "\r" "\r\n" <file_name >new_file_name
+Change a Windows file into a unix file:
+tr -d "\r" <file_name > new_file_name
